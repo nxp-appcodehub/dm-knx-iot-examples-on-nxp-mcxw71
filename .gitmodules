@@ -1,0 +1,6 @@
+[submodule "KNX-IOT-STACK"]
+	path = KNX-IOT-STACK
+	url = https://github.com/KNX-IOT/KNX-IOT-STACK.git
+[submodule "ot-nxp"]
+	path = ot-nxp
+	url = https://github.com/NXP/ot-nxp.git

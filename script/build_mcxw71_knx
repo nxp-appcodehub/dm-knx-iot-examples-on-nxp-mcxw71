@@ -1,0 +1,183 @@
+#!/bin/bash
+#
+#  Copyright 2024-2025 NXP
+#
+#  SPDX-License-Identifier: BSD-3-Clause
+#
+#MIME_PATTERN="application/x-executable"
+#DIR_LIST="cli","ncp"
+
+set -exo pipefail
+
+OT_CMAKE_NINJA_TARGET=${OT_CMAKE_NINJA_TARGET-}
+BUILD_DIR="${OT_CMAKE_BUILD_DIR:-build_mcxw71}"
+
+PRJ_SRCDIR="$(pwd)"
+readonly PRJ_SRCDIR
+OT_SRCDIR="$(pwd)/ot-nxp"
+
+readonly OT_SRCDIR
+readonly OT_OPTIONS=(
+    "-DBUILD_TESTING=OFF"
+    "-DCMAKE_TOOLCHAIN_FILE=ot-nxp/cmake/toolchain/arm-none-eabi.cmake"
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+    "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+    "-DOT_NXP_EXPORT_TO_SREC=ON"
+    "-DOT_PLATFORM=external"
+    "-DOT_SLAAC=ON"
+    "-DOT_NXP_PLATFORM=mcxw71"
+    "-DOT_NXP_PLATFORM_FAMILY=mcxw"
+    "-DOT_APP_NCP=OFF"
+    "-DOT_APP_RCP=OFF"
+    "-DOT_APP_CLI=OFF"
+    "-DOT_RCP=OFF"
+    "-DOT_FTD=ON"
+    "-DOT_MTD=OFF"
+    "-DOT_MAC_CSL_RECEIVER_ENABLE=ON"
+)
+
+readonly KNX_SENSOR_OPTIONS=(
+    "-DOT_APP_LOWPOWER=OFF"
+    "-DKNX_BUILTIN_MBEDTLS=OFF"
+    "-DBYPASS_KIS_CLIENT_SERVER=ON"
+    "-DKNX_SENSOR=ON"
+    "-DUSE_FREERTOS=ON"
+    "-DFREERTOS_CONFIG_FILE_DIRECTORY=${PRJ_SRCDIR}/port/freertos"
+)
+
+readonly KNX_ACTUATOR_OPTIONS=(
+    "-DOT_APP_LOWPOWER=OFF"
+    "-DKNX_BUILTIN_MBEDTLS=OFF"
+    "-DBYPASS_KIS_CLIENT_SERVER=ON"
+    "-DKNX_ACTUATOR=ON"
+    "-DUSE_FREERTOS=ON"
+    "-DFREERTOS_CONFIG_FILE_DIRECTORY=${PRJ_SRCDIR}/port/freertos"
+)
+
+readonly KNX_STACK_OPTIONS=(
+    "-DKNX_GOT_MAX_ENTRIES=5"
+    "-DKNX_GPT_MAX_ENTRIES=5"
+    "-DKNX_GRT_MAX_ENTRIES=5"
+    "-DKNX_SEC_MAX_ENTRIES=5"
+    "-DOC_OSCORE_ENABLED=OFF"
+    "-DOC_PUBLISHER_TABLE_ENABLED=ON"
+    "-DOC_PRINT_ENABLED=ON"
+    "-DOC_DEBUG_ENABLED=ON"
+)
+
+build()
+{
+    local cmakeArgs=("${@}")
+    mkdir -p "${BUILD_DIR}"
+    cd "${BUILD_DIR}"
+    if [ ! "$1" = "folder_not_specified" ]; then
+        cmakeArgs=("${@:2}")
+        rcp_folder_name="$1"
+        mkdir -p "${rcp_folder_name}"
+        cd "${rcp_folder_name}"
+    fi
+
+    # shellcheck disable=SC2068
+    cmake -GNinja -DSDK_GH=$SDK_GH -DUSE_NBU=1 -DOT_COMPILE_WARNING_AS_ERROR=ON -DOT_MBEDTLS_CONFIG_FILE=\"mbedtls-config.h\" ${cmakeArgs[@]} "${PRJ_SRCDIR}"
+
+    if [[ -n ${OT_CMAKE_NINJA_TARGET[*]} ]]; then
+        ninja "${OT_CMAKE_NINJA_TARGET[@]}"
+    else
+        ninja
+    fi
+
+    cd "${PRJ_SRCDIR}"
+}
+
+build_knx_light_sensor()
+{
+    echo "Building KNX Light Sensor with OT support..."
+    app_folder_name="knx_light_sensor"
+    local options=("${app_folder_name}")
+    options+=("${OT_OPTIONS[@]}")
+    options+=("${KNX_SENSOR_OPTIONS[@]}")
+    options+=("${KNX_STACK_OPTIONS[@]}")
+    options+=("-DNXP_SDK_ROOT=$NXP_K32W1_SDK_ROOT")
+    options+=("$@")
+    options+=(" -DSDK_RELEASE=$SDK_RELEASE")
+    build "${options[@]}"
+
+    if [ $? -eq 1 ]; then
+        exit 1
+    fi
+}
+
+build_knx_light_actuator()
+{
+    echo "Building KNX Light Actuator with OT support..."
+    app_folder_name="knx_light_actuator"
+    local options=("${app_folder_name}")
+    options+=("${OT_OPTIONS[@]}")
+    options+=("${KNX_ACTUATOR_OPTIONS[@]}")
+    options+=("${KNX_STACK_OPTIONS[@]}")
+    options+=("-DNXP_SDK_ROOT=$NXP_K32W1_SDK_ROOT")
+    options+=("$@")
+    options+=(" -DSDK_RELEASE=$SDK_RELEASE")
+    build "${options[@]}"
+
+    if [ $? -eq 1 ]; then
+        exit 1
+    fi
+}
+
+create_directory_and_build()
+{
+    option=$1
+    shift # remove first parameter
+    if [ "$option" == 'all' ]; then
+        build_knx_light_sensor "$@"
+        build_knx_light_actuator "$@"
+    elif [ "$option" == 'knx_light_sensor' ]; then
+        build_knx_light_sensor "$@"
+    elif [ "$option" == 'knx_light_actuator' ]; then
+        build_knx_light_actuator "$@"
+    else
+        echo >&2 "Unsupported action: $option. Supported: all, knx_light_sensor, knx_light_actuator"
+        # 128 for Invalid arguments
+        exit 128
+    fi
+}
+
+main()
+{
+
+    # Check if NXP_K32W1_SDK_ROOT contains a valid SDK
+    #    if NXP_K32W1_SDK_ROOT is not defined
+    #         We are using a github SDK
+
+    SDK_GH=OFF
+
+    if [ -z "$NXP_K32W1_SDK_ROOT" ]; then
+        export NXP_K32W1_SDK_ROOT="${OT_SRCDIR}/third_party/github_sdk"
+    fi
+
+    if [ -d $NXP_K32W1_SDK_ROOT/core/.git ]; then
+        SDK_RELEASE=OFF
+
+        if [ -f $NXP_K32W1_SDK_ROOT/core/SW-Content-Register.txt ]; then
+            SDK_GH=ON
+        fi
+
+    elif [ -f $NXP_K32W1_SDK_ROOT/core/SW-Content-Register.txt ]; then
+        SDK_RELEASE=ON
+    else
+        echo "Could not find a valid SDK package!"
+        return
+    fi
+
+    echo "NXP_K32W1_SDK_ROOT set to " $NXP_K32W1_SDK_ROOT
+
+    if [ $# == 0 ]; then
+        create_directory_and_build all $SDK_RELEASE "$@"
+    else
+        create_directory_and_build "$1" $SDK_RELEASE "$@"
+    fi
+
+}
+
+main "$@"
