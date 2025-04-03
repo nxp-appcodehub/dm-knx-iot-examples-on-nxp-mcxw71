@@ -1,13 +1,13 @@
 NXP Software Content Register
 
 Package:              dm-knx-iot-examples-on-nxp-mcxw71
-Version:              1.0
+Version:              2.0
 Outgoing License:     LA_OPT_Online Code Hosting NXP_Software_License - v1.3 December 2024
 License file:         License.txt
 Description:          The application examples in this repository are FreeRTOS based applications running the open source KNX IoT stack on NXP OpenThread enabled platforms such as NXP FRDM-MCXW71.
 Release location:     https://github.com/nxp-appcodehub/dm-knx-iot-examples-on-nxp-mcxw71
 Origin:               NXP (BSD-3-Clause)
-                      KNX IoT Stack (Apache License Version 2.0) - https://github.com/KNX-IOT/KNX-IOT-STACK
+                      KNX IoT Stack (Apache License Version 2.0) - https://gitlab.knx.org/public-projects/knx-iot-point-api-stack
                       The OpenThread Authors (BSD-3-Clause) - https://github.com/NXP/ot-nxp
                       Amazon FreeRTOS Kernel v10.5.0 (MIT) - https://github.com/nxp-mcuxpresso/FreeRTOS-Kernel/tree/MCUX_2.16.100
                       Cascoda LTD (Apache License Version 2.0) - LICENSE-Apache.md

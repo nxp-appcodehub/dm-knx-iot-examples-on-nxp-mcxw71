@@ -1,6 +1,12 @@
-[submodule "KNX-IOT-STACK"]
-	path = KNX-IOT-STACK
-	url = https://github.com/KNX-IOT/KNX-IOT-STACK.git
 [submodule "ot-nxp"]
 	path = ot-nxp
 	url = https://github.com/NXP/ot-nxp.git
+[submodule "KNX-IOT-STACK/deps/tinycbor"]
+	path = KNX-IOT-STACK/deps/tinycbor
+	url = https://github.com/intel/tinycbor.git
+[submodule "KNX-IOT-STACK/deps/mbedtls"]
+	path = KNX-IOT-STACK/deps/mbedtls
+	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "KNX-IOT-STACK/deps/gtest"]
+	path = KNX-IOT-STACK/deps/gtest
+	url = https://github.com/google/googletest.git

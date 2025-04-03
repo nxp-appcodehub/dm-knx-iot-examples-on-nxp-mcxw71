@@ -9,7 +9,7 @@ The basic demo allows pressing a switch on the light_sensor application to trigg
 
 ## Running the example
 
-1. Prepare two boards with the light sensor and light actuator firmwares. Flashing is described in the `Flashing the FRDM-MCXW71 board` section from the [readme](../README.md).
+1. Prepare two boards with the light sensor and light actuator firmware images. Flashing is described in the `Flashing the FRDM-MCXW71 board` section from the [readme](../README.md).
 2. The CLI example uses UART connection. To view raw UART output, start a terminal emulator like PuTTY and connect to the used COM port with the following UART settings:
 
    - Baud rate: 115200
@@ -77,7 +77,7 @@ At this point, the boards are connected to the same Thread network and communica
 ## Setting up KNX parameters
 
 On the KNX application level, some settings are needed to be done from the CLI on both devices in order to establish the KNX communication. This can be exercised using the implemented KNX shell commands. Details about the available KNX shell commands can be found [here](knx_shell_help.md).
-A simple example of configuration for the KNX light_actuator and light_sensor devices is shown below. This needs to be done after devices are connected to the Thread network. 
+A simple example of configuration for the KNX light_actuator and light_sensor devices is shown below. This needs to be done after devices are connected to the Thread network.
 
 1. On the light_sensor board, enter in the CLI interface:
 ```
@@ -130,7 +130,7 @@ coap://[ff35:0030:fd00:0000:0001:0000:0000:0001]:0
 Done
 ```
 
-> **_Note:_** Setting the individial address (IA), the installation id (IID) and the group address (GA) correctly is imported. IA and GA are required to be the same for all devices, while IA needs to be particular for each device. In this particular case, IID is 1 and GA is 1 for all KNX IoT devices.
+> **_Note:_** Setting the individual address (IA), the installation id (IID) and the group address (GA) correctly is imported. IA and GA are required to be the same for all devices, while IA needs to be particular for each device. In this particular case, IID is 1 and GA is 1 for all KNX IoT devices.
 
 3. On the light_sensor board, press switch marked SW2 and observe the toggle of the RGB LED on the light_actuator board to green.
 

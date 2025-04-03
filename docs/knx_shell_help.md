@@ -15,8 +15,6 @@ Done
 >
 ```
 
-The following 
-
 - individual address (ia). This can be set by issuing the `knx_ia` command from CLI.
 ```
 > knx_ia
@@ -123,7 +121,7 @@ Done
 >
 ```
 
-- KNX factoryreset command, done by issuing `knx_factoryreset` command from CLI.
+- KNX factory reset command, done by issuing `knx_factoryreset` command from CLI.
 This command is used to call KNX storage reset for device 0 (this device) and code 2 (Factory Reset to default state). It also erases the OpenThread Stack persistent data and causes the board to reset.
 ```
 > knx_factoryreset
@@ -134,7 +132,7 @@ Deleting Group Publisher Table from Persistent storage
 ...
 ```
 
-- programming mode (om). This can be set by issuing the `knx_pm` command from CLI.
+- programming mode (pm). This can be set by issuing the `knx_pm` command from CLI.
 ```
 > knx_pm
 Device in programming mode: FALSE
