@@ -20,8 +20,6 @@ Done
 The OpenThread configuration on the border router can be done via CLI:
 
 ```
-> factoryreset
-Done
 > dataset init new
 Done
 > dataset channel 17
@@ -66,7 +64,7 @@ knx_iid 1
 knx_got add 0 /p/o_1_1 20 ga 1
 ```
 
-On the LSAB application running on the PC, due to the limited functionality of the application, some changes are required. These changes consist in calling the APIs to set the individual address (ia), installation id (iid) and group object table entry (got) in the application on startup and compiling the application with OC_OSCORE_ENABLED flag set to OFF. The build steps for [Windows](https://knx-iot.github.io/building_windows/) and [Linux](https://knx-iot.github.io/building_linux/) are available online.
+On the LSAB application running on the PC, due to the limited functionality of the application, some changes are required. These changes consist in calling the APIs to set the individual address (ia), installation id (iid) and group object table entry (got) in the application on startup and compiling the application with OC_OSCORE_ENABLED flag set to OFF.
 
 A git diff of the changes for the lsab_minimal application is pasted below:
 ```
@@ -106,6 +104,39 @@ index 4a63f683..2247ba33 100644
 
 Building the application with OSCORE disabled can be done by passing "-DOC_OSCORE_ENABLED=OFF" to the cmake command during build.
 
+The build on Windows or Linux has as prerequisites installing the following:
+- [CMake](https://cmake.org/) (>=3.16)
+- [Git](https://git-scm.com/)
+- [Python 3](https://www.python.org/) (>=3.8)
+- Optional: [OpenSSL](https://openssl-library.org/) (if TLS is required)
+
+Over Windows, each application needs to be installed using the dedicated installer, while on Linux, the following command can be issued in terminal:
+```
+sudo apt update
+sudo apt install build-essential cmake git pkg-config libssl-dev libmbedtls-dev libcoap3 libcoap3-dev
+```
+
+After cloning the KNX IoT stack code, the build can be done using the following steps in command prompt or terminal:
+```
+- Windows:
+<cd to KNX IoT Stack folder>
+mkdir build
+cd build
+cmake .. -DOC_OSCORE_ENABLED=OFF
+cmake --build . --config Release
+<the resulting apps will be available in apps\Release\ folder>
+```
+
+```
+- Linux:
+<cd to KNX IoT Stack folder>
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DOC_OSCORE_ENABLED=OFF
+make -j$(nproc)
+<the resulting apps will be available in apps/ folder>
+```
+
 After setting up the OTBR, connecting the KNX devices to the networks and starting the LSAB PC application, user can press the light sensor's SW2 button and observe the output of the application on the PC.
 
 Example output:
@@ -115,7 +146,7 @@ Example output:
 argv[0] = ./apps/lsab_minimal_all
 KNX-IOT Server name : "Actuator (LSAB) 417"
 Current working dir: /home/user/Documents/KNX-IOT-STACK/build
-	storage at './LSAB_minimal_creds' 
+	storage at './LSAB_minimal_creds'
 	Creating storage directory at LSAB_minimal_creds
 D: oc_buffer.c <process_thread_message_buffer_handler:218>: Started buffer handler process
 D: oc_discovery.c <oc_create_discovery_resource:649>: resources for dev 0 created statically
@@ -156,10 +187,10 @@ Loading Device Config from Persistent storage
   idd (storage) 0
 oc_knx_load_state: Loading Device Config from Persistent storage
 Register Resource with local path "/p/o_1_1"
-Light Switching actuator 417 (LSAB) : SwitchOnOff 
-Data point 417.61 (DPT_Switch) 
+Light Switching actuator 417 (LSAB) : SwitchOnOff
+Data point 417.61 (DPT_Switch)
 D: oc_main.c <oc_main_init:344>: oc_main: stack initialized
-oc_register_group_multicasts: mport 0 
+oc_register_group_multicasts: mport 0
 oc_register_group_multicasts index=0 i=0 group: 1  cflags=w
   oc_create_multicast_group_address_with_port S=2 iid=0 G=1 B4=0 B3=0 B2=0 B1=1
   coap://[ff32:0030:fd00:0000:0000:0000:0000:0001]:0
@@ -172,17 +203,17 @@ coap://[fd7e:caa2:7292:34b8:374a:0df6:2910:3505]:40146
 Server "Actuator (LSAB) 417" running, waiting on incoming connections.
 iid set: 1
 D: oc_knx_fp.c <oc_dump_group_object_table_entry:1861>: oc_dump_group_object_table_entry: dumped current state [GOT_STORE_0] [0]: size 19
-oc_register_group_multicasts: mport 0 
+oc_register_group_multicasts: mport 0
 oc_register_group_multicasts index=0 i=0 group: 1  cflags=w
   oc_create_multicast_group_address_with_port S=2 iid=1 G=1 B4=0 B3=0 B2=0 B1=1
   coap://[ff32:0030:fd00:0000:0001:0000:0000:0001]:0
   oc_create_multicast_group_address_with_port S=5 iid=1 G=1 B4=0 B3=0 B2=0 B1=1
   coap://[ff35:0030:fd00:0000:0001:0000:0000:0001]:0
- 
- 
+
+
 Incoming message of size 33 bytes from coap://[fd11:0022:0000:0000:1ba9:89ec:cc61:a147]:5683
- 
-D: engine.c <coap_receive:207>: CoAP Engine: received datalen=33 from 
+
+D: engine.c <coap_receive:207>: CoAP Engine: received datalen=33 from
 DEBUG: engine.c <coap_receive:208>: coap://[fd11:0022:0000:0000:1ba9:89ec:cc61:a147]:5683
 D: engine.c <coap_receive:209>:  58 02 AD 96 7F 42 EE 68 29 70 E8 3A B1 6B 11 3C 51 3C FF BF 04 02 05 BF 07 01 06 61 77 01 F5 FF FF
 CoAP Engine: received datalen=33 from coap://[fd11:0022:0000:0000:1ba9:89ec:cc61:a147]:5683
@@ -217,7 +248,7 @@ oc_print_rep_as_json:
     "1" : true
   }
 }
- 
+
 Full Payload Size: 14
 Device not in runtime state:0 - ignore message not adding callback
 D: coap.c <coap_serialize_options:394>: Calculating size of options
@@ -232,6 +263,6 @@ D: coap.c <coap_send_message:1208>: -sending message (4)-
 D: transactions.c <coap_clear_transaction:216>: Freeing transaction 34293: 0x5a41b2e4c770
 D: oc_buffer.c <process_thread_message_buffer_handler:260>: Outbound network event: unicast message
 Outgoing message of size 4 bytes to coap://[fd11:0022:0000:0000:1ba9:89ec:cc61:a147]:5683
- 
+
 D: ipadapter.c <send_msg:1015>: Sent 4 bytes
 ```

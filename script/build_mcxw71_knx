@@ -78,7 +78,7 @@ build()
     fi
 
     # shellcheck disable=SC2068
-    cmake -GNinja -DSDK_GH=$SDK_GH -DUSE_NBU=1 -DOT_COMPILE_WARNING_AS_ERROR=ON -DOT_MBEDTLS_CONFIG_FILE=\"mbedtls-config.h\" ${cmakeArgs[@]} "${PRJ_SRCDIR}"
+    cmake -GNinja -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DSDK_GH=$SDK_GH -DUSE_NBU=1 -DOT_COMPILE_WARNING_AS_ERROR=ON -DOT_MBEDTLS_CONFIG_FILE=\"mbedtls-config.h\" ${cmakeArgs[@]} "${PRJ_SRCDIR}"
 
     if [[ -n ${OT_CMAKE_NINJA_TARGET[*]} ]]; then
         ninja "${OT_CMAKE_NINJA_TARGET[@]}"

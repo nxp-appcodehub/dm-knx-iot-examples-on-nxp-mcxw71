@@ -1,0 +1,48 @@
+@startuml
+skinparam componentStyle rectangle
+
+class Application {
+  Implements :
+  ..
+  Application datapoints:
+  Listen to GET/PUT/POST/DELETE requests
+  ..
+  Issuing S-Mode requests
+  ..
+  Receives S-Mode requests
+  ==
+  Sets
+  ..
+  Device characteristics data
+  ==
+  Starts stack
+}
+
+class Stack {
+  Functionallity
+  ..
+  Discovery (CoAP & mDNS)
+  ..
+  S-Mode client and server
+  ..
+  Datapoint client and server
+  ..
+  Security  
+  ==
+  Persistent Storage
+  ..
+  Device characteristics data
+  ..
+  Application data (tables)
+  ==
+  Server:
+  ..
+  Mandatory resources
+  ..
+  Application resources
+}
+
+Application ..> Stack : <<uses>>
+
+footer //knx application//
+@enduml

@@ -66,8 +66,9 @@
  */
 
 #include "oc_api.h"
-#include "oc_knx_dev.h"
 #include "oc_core_res.h"
+#include "oc_knx.h"
+#include "oc_knx_dev.h"
 #include "api/oc_knx_fp.h"
 #include "port/oc_clock.h"
 #ifdef OC_SPAKE
@@ -621,6 +622,9 @@ signal_event_loop(void)
 
 int appKnxStart(int argc, char *argv[])
 {
+    (void) argc;
+    (void) argv;
+
     xTaskCreate(knx_main, "knx", KNX_TASK_SIZE, NULL, KNX_TASK_PRIORITY, &sKnxTask);
     return 0;
 }
@@ -681,6 +685,9 @@ knx_main(void *context)
   oc_set_restart_cb(restart_cb, NULL);
   oc_set_factory_presets_cb(factory_presets_cb, NULL);
 
+  /* start the stack */
+  init = oc_main_init(&handler);
+
   instance = otGetOtInstance();
 
   if(instance != NULL)
@@ -694,9 +701,6 @@ knx_main(void *context)
   {
     goto exit;
   }
-
-  /* start the stack */
-  init = oc_main_init(&handler);
 
   oc_a_lsm_set_state(0, LSM_S_LOADED);
 

@@ -34,7 +34,7 @@ The build system uses `cmake`, `ninja` and `gcc` for ARM. These can be installed
 
 Another required tool is `git`, used to pull the repository code.
 
-[Secure Provisioning SDK tool](https://www.nxp.com/design/design-center/software/development-software/secure-provisioning-sdk-spsdk:SPSDK) is required to handle NBU updates. This tool can be insalled using Python:
+[Secure Provisioning SDK tool (SPSDK)](https://www.nxp.com/design/design-center/software/development-software/secure-provisioning-sdk-spsdk:SPSDK)<a name="spsdk"></a> is required to handle NBU updates. This tool can be installed using Python:
 
 ```
 $ pip install spsdk
@@ -43,6 +43,8 @@ $ pip install spsdk
 Note: There might be some dependencies that cause conflicts with already
 installed Python modules. However, `blhost` tool is still installed and can
 be used.
+
+> **_Note on Windows and WSL:_** Windows Subsystem for Linux doesn't map the connected USB devices automatically. As workaround, user needs to use the WSL console for the application build and the Windows command prompt/Power Shell to work with blhost and Jlink that write the required binaries to the boards.
 
 For debugging purpose, [MCUXpresso IDE](https://www.nxp.com/design/design-center/software/development-software/mcuxpresso-software-and-tools-/mcuxpresso-integrated-development-environment-ide:MCUXpresso-IDE) needs to be installed.
 
@@ -90,21 +92,7 @@ This is a setup script to set the NXP port of KNX IoT OpenThread examples enviro
 Usage: ./environment_setup.sh clean|setup_repos|setup_tools|apply_ot_patch
 ```
 
-User can use the script to either set up the build environment tools, set up the subrepositories and SDKs or to clean the repositories.
-
-- Example of output for command to setting up the toolchain:
-```bash
-$ ./environment_setup.sh setup_tools
-This is a setup script to set the NXP port of KNX IoT OpenThread examples environment.
-Setting up the toolchain.
-The script will update the toolchain.
-The setup will take several minutes to complete.
-Setting up ot-nxp toolchain environment.
-+ main
-++ dirname ./script/bootstrap
-+ ./script/../openthread/script/bootstrap
-...
-```
+User can use the script to either set up the subrepositories, set up the build environment tools and SDKs or to clean the repositories.
 
 - Example of output for command to setting up the repositories:
 ```bash
@@ -208,7 +196,7 @@ Two images must be written to the board: one for the host (CM33) and one for the
 
 ### Flashing the `NBU` image
 
-`NBU` image should be written only when a new NXP SDK is released.
+`NBU` image should be written only when a new NXP SDK is released. [SPSDK](#spsdk) needs to be installed before this step.
 
     It is necessary to work with the matching `NBU` image for the SDK version of
     the application you are working with. This means that when you download your
@@ -319,9 +307,9 @@ For details about the KNX shell, see the [KNX shell documentation](docs/knx_shel
 
 ## 4. Support<a name="step4"></a>
 - Reach out to NXP Wireless Community page for more support - [NXP Wireless Community](https://community.nxp.com/t5/Wireless-MCU/bd-p/wireless-connectivity)
-- KNX IoT Stack - [KNX IoT stack](https://github.com/KNX-IOT/KNX-IOT-STACK)
+- KNX IoT Stack introduction - [KNX IoT stack](https://www.knxtoday.com/2023/11/48537/knx-iot-part-7-the-open-source-knx-iot-stack.html)
 - Introduction to KNX IoT from KNX association - [KNX IoT](https://www.knxtoday.com/2023/01/45274/knx-iot-part-1-an-introduction.html)
-- Introduction to KNX IoT Point API - [KNX IoT API](https://knx-iot.github.io/architecture/)
+- Latest KNX IoT Point API Stack development - [KNX IoT Point API](https://gitlab.knx.org/public-projects/knx-iot-point-api-stack)
 
 #### Project Metadata
 
@@ -350,6 +338,7 @@ Questions regarding the content/correctness of this example can be entered as Is
 | Version | Description / Update                           | Date                        |
 |:-------:|------------------------------------------------|----------------------------:|
 | 1.0     | Initial release on Application Code Hub        | January 31<sup>st</sup> 2025 |
+| 1.1     | KNX IoT stack reference, application and readme        | April 8<sup>st</sup> 2025 |
 
 ## Licensing
 
